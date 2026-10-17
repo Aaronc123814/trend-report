@@ -97,6 +97,19 @@
   .chip { max-width: 100%; overflow-wrap: anywhere; font-family: var(--sans); font-size: 13px; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; color: var(--text); background: var(--bg); }
   a.chip:hover { border-color: var(--text); }
 
+  /* Hosted site: thumbnails are ~300px wide, so the lead photo sits beside the headline at near its real size */
+  .static .lead { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); column-gap: 24px; align-content: start; }
+  .static .lead > .thumb { grid-row: 1 / span 3; margin-bottom: 0; align-self: start; }
+  .static .lead > .kicker, .static .lead > h3, .static .lead > .stats { grid-column: 2; }
+  .static .lead > .kicker { align-self: end; }
+  .static .lead > h3 { font-size: clamp(28px, 3vw, 40px); }
+  .static .lead > .news, .static .lead > .chips { grid-column: 1 / -1; }
+  .static .lead .thumb.empty > em { font-size: clamp(32px, 4vw, 52px); }
+  @media (max-width: 640px) {
+    .static .lead { grid-template-columns: minmax(0, 1fr); }
+    .static .lead > * { grid-column: 1 !important; grid-row: auto !important; }
+    .static .lead > .thumb { margin-bottom: 16px; max-width: 340px; }
+  }
   .side-stack { padding-left: 28px; display: grid; align-content: start; }
   .side-stack a { display: grid; grid-template-columns: 1fr 112px; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
   .side-stack a:first-child { padding-top: 0; }

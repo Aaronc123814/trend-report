@@ -52,7 +52,7 @@ def main():
     (out / "data").mkdir(parents=True, exist_ok=True)
 
     page = trends.PAGE.read_text(encoding="utf-8")
-    page = page.replace("<script>", "<script>window.STATIC_DATA = true;</script>\n<script>", 1)
+    page = page.replace("<script>", '<script>window.STATIC_DATA = true; document.documentElement.classList.add("static");</script>\n<script>', 1)
     (out / "index.html").write_text(page, encoding="utf-8")
     (out / ".nojekyll").write_text("")
 
