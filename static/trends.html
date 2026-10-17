@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Trend Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface-2: #f2f2f2;
+    --canvas: #f5f4ef;
+    --line: #d9d9d9;
+    --line-strong: #0d0d0d;
+    --text: #0d0d0d;
+    --muted: #595959;
+    --accent: #e3120b;
+    --accent-dark: #c20e08;
+    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --sans: "Inter", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+    --max: 1320px;
+    --gutter: clamp(16px, 3vw, 40px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--serif); font-size: 17px; line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  a:hover .hl, a.hl:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  button, select, input { font: inherit; color: inherit; }
+  main, section, .top-grid > *, .two-col > *, .figures > * { min-width: 0; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+  h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; line-height: 1.2; letter-spacing: -.005em; }
+  .kicker { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--accent); }
+  .meta { font-family: var(--sans); font-size: 13px; color: var(--muted); }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* Ticker */
+  .ticker { color: var(--text); font-family: var(--sans); font-size: 12px; font-weight: 500; overflow: hidden; white-space: nowrap; border-bottom: 1px solid var(--line); min-height: 33px; }
+  .ticker-track { display: inline-block; padding: 8px 0; animation: scroll 90s linear infinite; }
+  .ticker-track span { margin: 0 24px; }
+  .ticker-track span::before { content: ""; display: inline-block; width: 6px; height: 6px; background: var(--accent); margin-right: 10px; vertical-align: middle; transform: translateY(-1px); }
+  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
+
+  /* Masthead */
+  header.mast { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--line); }
+  .mast-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; height: 76px; }
+  .logo { background: var(--accent); color: #fff; padding: 6px 14px 8px; line-height: 1.05; font-family: var(--serif); font-weight: 700; font-size: clamp(18px, 2.4vw, 24px); white-space: nowrap; }
+  .mast-date { font-family: var(--sans); font-size: 12px; color: var(--muted); min-width: 0; }
+  .controls { display: flex; align-items: center; gap: 10px; font-family: var(--sans); font-size: 14px; }
+  select { border: 1px solid var(--text); border-radius: 999px; padding: 8px 14px; background: var(--bg); font-weight: 600; cursor: pointer; }
+  .btn { font-family: var(--sans); font-size: 14px; font-weight: 600; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; white-space: nowrap; }
+  .btn:hover { background: var(--accent-dark); }
+  .btn:disabled { opacity: .6; cursor: progress; }
+  nav.tabs { border-top: 1px solid var(--line); }
+  nav.tabs .wrap { display: flex; gap: 28px; align-items: center; }
+  nav.tabs button { background: none; border: 0; border-bottom: 3px solid transparent; padding: 11px 0 8px; font-family: var(--sans); font-size: 15px; font-weight: 600; cursor: pointer; color: var(--muted); }
+  nav.tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); }
+  nav.tabs .updated { margin-left: auto; }
+  @media (max-width: 640px) { .mast-row { height: 64px; } .logo { font-size: 17px; padding: 5px 10px 6px; } select { padding: 7px 8px; max-width: 120px; } .mast-row { gap: 10px; } .controls { gap: 6px; } .btn { padding: 7px 11px; } .logo { font-size: 16px; } .mast-date, nav.tabs .updated { display: none; } .btn .lbl { display: none; } }
+
+  /* Section heads */
+  section.block { padding: 36px 0 44px; }
+  .sec-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 22px; gap: 16px; border-top: 4px solid var(--line-strong); padding-top: 10px; position: relative; }
+  .sec-head::before { content: ""; position: absolute; top: -4px; left: 0; width: 64px; height: 4px; background: var(--accent); }
+  .sec-head h2 { font-family: var(--sans); font-size: clamp(20px, 2vw, 24px); font-weight: 700; }
+  .sec-head .meta { text-align: right; }
+
+  /* Summary figures */
+  .figures { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--line); padding: 28px 0; }
+  .figure { padding: 0 20px; border-right: 1px solid var(--line); }
+  .figure:first-child { padding-left: 0; }
+  .figure:last-child { border-right: 0; }
+  .figure b { display: block; font-family: var(--serif); font-size: clamp(30px, 3.4vw, 44px); font-weight: 600; line-height: 1.05; }
+  .figure span { font-family: var(--sans); font-size: 13px; color: var(--muted); }
+  @media (max-width: 760px) { .figures { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 22px; } .figure:nth-child(2) { border-right: 0; } .figure:nth-child(3) { padding-left: 0; } }
+
+  /* Lead */
+  .top-grid { display: grid; grid-template-columns: 1.6fr 1fr; }
+  .lead { padding-right: 28px; border-right: 1px solid var(--line); }
+  .lead .thumb { display: block; aspect-ratio: 16/9; background: var(--surface-2); overflow: hidden; margin-bottom: 16px; position: relative; }
+  .lead .thumb > em { display: none; }
+  .lead .thumb.empty > em { display: block; }
+  .lead .thumb.empty { display: flex; align-items: center; justify-content: center; background: var(--canvas); }
+  .lead .thumb.empty em { font-family: var(--serif); font-size: clamp(40px, 7vw, 96px); font-weight: 700; color: var(--accent); font-style: normal; padding: 0 24px; text-align: center; line-height: 1; }
+  .credit { position: absolute; right: 8px; bottom: 6px; font-family: var(--sans); font-size: 11px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.6); }
+  .lead h3 { font-size: clamp(32px, 4vw, 52px); line-height: 1.08; margin: 8px 0 10px; text-transform: capitalize; }
+  .lead .stats { font-family: var(--sans); font-size: 15px; color: var(--muted); }
+  .lead .stats strong { color: var(--text); }
+  .news { list-style: none; margin-top: 18px; }
+  .news li { border-top: 1px solid var(--line); padding: 12px 0; }
+  .news li a { font-size: 18px; font-weight: 600; line-height: 1.3; }
+  .news li .meta { margin-top: 4px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .chip { max-width: 100%; overflow-wrap: anywhere; font-family: var(--sans); font-size: 13px; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; color: var(--text); background: var(--bg); }
+  a.chip:hover { border-color: var(--text); }
+
+  .side-stack { padding-left: 28px; display: grid; align-content: start; }
+  .side-stack a { display: grid; grid-template-columns: 1fr 112px; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .side-stack a:first-child { padding-top: 0; }
+  .side-stack a:last-child { border-bottom: 0; }
+  .side-stack h4 { font-size: 21px; text-transform: capitalize; margin: 2px 0 4px; }
+  .side-stack .thumb { aspect-ratio: 4/3; background: var(--surface-2); overflow: hidden; }
+  .side-stack .thumb.empty { visibility: hidden; }
+  .thumb img { opacity: 0; transition: opacity .3s; }
+  .thumb img.ok { opacity: 1; }
+  @media (max-width: 960px) {
+    .top-grid { grid-template-columns: minmax(0, 1fr); }
+    .lead { padding: 0 0 24px; border-right: 0; border-bottom: 1px solid var(--line); }
+    .side-stack { padding: 20px 0 0; }
+  }
+
+  /* Breaking */
+  .breaking { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px 40px; }
+  .breaking a { position: relative; }
+  .breaking a::after { content: ""; position: absolute; top: 0; bottom: 0; right: -20px; border-right: 1px solid var(--line); }
+  .breaking a:nth-child(4n)::after, .breaking a:last-child::after { display: none; }
+  .breaking .thumb { aspect-ratio: 16/9; background: var(--surface-2); overflow: hidden; margin-bottom: 12px; }
+  .breaking .kicker b { font-weight: 700; }
+  .breaking h4 { font-size: 19px; text-transform: capitalize; margin: 4px 0 6px; }
+  @media (max-width: 960px) {
+    .breaking { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .breaking a:nth-child(n)::after { display: block; }
+    .breaking a:nth-child(2n)::after, .breaking a:last-child::after { display: none; }
+  }
+  @media (max-width: 520px) { .breaking { grid-template-columns: minmax(0, 1fr); gap: 0; } .breaking a { padding: 0 0 20px; margin-bottom: 20px; border-bottom: 1px solid var(--line); } .breaking a:nth-child(n)::after { display: none; } }
+
+  /* Ranking with bars */
+  .two-col { display: grid; grid-template-columns: 1.6fr 1fr; gap: 0; }
+  .two-col > div:first-child { padding-right: 28px; border-right: 1px solid var(--line); }
+  .two-col > div:last-child { padding-left: 28px; }
+  @media (max-width: 960px) { .two-col { grid-template-columns: minmax(0, 1fr); } .two-col > div:first-child { padding: 0 0 28px; border-right: 0; } .two-col > div:last-child { padding: 0; } }
+  ol.ranked { list-style: none; }
+  ol.ranked li { display: grid; grid-template-columns: 40px 88px 1fr auto; gap: 6px 14px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  ol.ranked .rank { font-family: var(--sans); font-size: 30px; font-weight: 700; color: var(--accent); line-height: 1; grid-row: span 2; }
+  ol.ranked .thumb { grid-row: span 2; aspect-ratio: 3/2; background: var(--surface-2); overflow: hidden; }
+  @media (max-width: 520px) { ol.ranked li { grid-template-columns: 32px 64px 1fr auto; gap: 6px 10px; } ol.ranked .term { font-size: 18px; } }
+  ol.ranked .term { font-size: 20px; font-weight: 600; text-transform: capitalize; }
+  ol.ranked .vol { font-family: var(--sans); font-size: 14px; font-weight: 600; text-align: right; }
+  ol.ranked .bar { grid-column: 3 / 5; height: 4px; background: var(--surface-2); }
+  ol.ranked .bar i { display: block; height: 100%; background: var(--text); }
+  ol.ranked li:first-child .bar i { background: var(--accent); }
+
+  .cat-list { list-style: none; }
+  .cat-list li { padding: 9px 0; border-bottom: 1px solid var(--line); font-family: var(--sans); font-size: 14px; }
+  .cat-list button { all: unset; cursor: pointer; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; width: 100%; }
+  .cat-list .bar { grid-column: 1 / 3; height: 6px; background: var(--surface-2); }
+  .cat-list .bar i { display: block; height: 100%; background: var(--accent); }
+  .cat-list li.active { font-weight: 700; }
+  .cat-list button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .note { font-family: var(--sans); font-size: 13px; color: var(--muted); margin-top: 14px; }
+
+  /* Full table */
+  .filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; font-family: var(--sans); font-size: 14px; }
+  .filters input[type=search] { border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; min-width: 0; flex: 1 1 220px; max-width: 360px; }
+  .filters input[type=search]:focus { outline: none; border-color: var(--text); }
+  .filters label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+  .filters .clear { background: none; border: 0; color: var(--accent); font-weight: 600; cursor: pointer; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-family: var(--sans); font-size: 14px; }
+  th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; padding: 10px 12px 10px 0; border-bottom: 2px solid var(--text); white-space: nowrap; cursor: pointer; user-select: none; }
+  th[aria-sort="descending"]::after { content: " ↓"; color: var(--accent); }
+  th[aria-sort="ascending"]::after { content: " ↑"; color: var(--accent); }
+  td { padding: 12px 12px 12px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.t { font-family: var(--serif); font-size: 17px; font-weight: 600; text-transform: capitalize; min-width: 180px; }
+  td.t .row { display: flex; gap: 14px; align-items: flex-start; }
+  td.t .thumb { flex: 0 0 96px; aspect-ratio: 3/2; background: var(--surface-2); overflow: hidden; }
+  td.t .thumb.empty { background: var(--canvas); }
+  .thumb.loading { background: linear-gradient(90deg, var(--surface-2) 0%, #e8e8e8 50%, var(--surface-2) 100%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }
+  @keyframes shimmer { from { background-position: 200% 0; } to { background-position: 0 0; } }
+  @media (prefers-reduced-motion: reduce) { .thumb.loading { animation: none; } }
+  td.rk { font-family: var(--sans); font-size: 20px; font-weight: 700; color: var(--accent); width: 52px; padding-top: 10px; }
+  @media (max-width: 640px) { td.t .thumb { flex-basis: 72px; } th.hide-sm, td.hide-sm { display: none; } }
+  td.t .rel { display: block; font-family: var(--sans); font-size: 12px; font-weight: 400; color: var(--muted); text-transform: none; margin-top: 2px; }
+  td.r { text-align: right; white-space: nowrap; }
+  .live { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-right: 6px; vertical-align: middle; }
+  .more { display: block; margin: 20px 0 0; background: var(--bg); color: var(--text); border-color: var(--text); }
+  .more:hover { background: var(--text); color: #fff; }
+
+  .status { padding: 80px 0; text-align: center; font-family: var(--sans); color: var(--muted); }
+  .status h2 { font-family: var(--serif); color: var(--text); font-size: 28px; margin-bottom: 8px; }
+
+  footer { background: #0d0d0d; color: #bdbdbd; padding: 36px 0; margin-top: 32px; font-family: var(--sans); font-size: 13px; }
+  footer .logo { display: inline-block; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="ticker"></div></div>
+
+<header class="mast">
+  <div class="wrap mast-row">
+    <span class="mast-date" id="date"></span>
+    <a class="logo" href="/">The Trend Report</a>
+    <div class="controls">
+      <select id="geo" aria-label="Region">
+        <option value="US">United States</option>
+        <option value="GB">United Kingdom</option>
+        <option value="CA">Canada</option>
+        <option value="AU">Australia</option>
+        <option value="IN">India</option>
+        <option value="IE">Ireland</option>
+        <option value="NZ">New Zealand</option>
+        <option value="DE">Germany</option>
+        <option value="FR">France</option>
+        <option value="ES">Spain</option>
+        <option value="IT">Italy</option>
+        <option value="BR">Brazil</option>
+        <option value="MX">Mexico</option>
+        <option value="JP">Japan</option>
+        <option value="ZA">South Africa</option>
+        <option value="SG">Singapore</option>
+      </select>
+      <button class="btn" id="refresh"><span aria-hidden="true">↻</span><span class="lbl"> Refresh</span></button>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <div class="wrap">
+      <button role="tab" data-win="today" aria-selected="true">Today</button>
+      <button role="tab" data-win="week" aria-selected="false">This week</button>
+      <span class="meta updated" id="updated"></span>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap" id="main">
+  <div class="status"><h2>Gathering today’s searches…</h2><p>Fetching the latest data from Google Trends.</p></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="logo">The Trend Report</div>
+    <p>Data from Google Trends “Trending now”. Search volumes are Google’s approximate figures. Today covers the past 24 hours; this week covers the past 7 days. Headlines and images belong to the linked publishers.</p>
+  </div>
+</footer>
+
+<script>
+const state = { data: null, win: "today", geo: "US", cat: null, q: "", liveOnly: false, sort: "rank", dir: 1, limit: 50, cards: 24 };
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmt = n => n >= 1e6 ? (n / 1e6).toFixed(n % 1e6 ? 1 : 0) + "M" : n >= 1e3 ? Math.round(n / 1e3) + "K" : String(n);
+const vol = n => fmt(n) + "+";
+const google = t => "https://www.google.com/search?q=" + encodeURIComponent(t);
+const explore = t => `https://trends.google.com/trends/explore?geo=${state.geo}&date=now%207-d&q=${encodeURIComponent(t)}`;
+const ago = ts => {
+  if (!ts) return "";
+  const h = (Date.now() / 1000 - ts) / 3600;
+  if (h < 1) return Math.max(1, Math.round(h * 60)) + " min ago";
+  if (h < 48) return Math.round(h) + " hr ago";
+  return Math.round(h / 24) + " days ago";
+};
+
+try { const saved = JSON.parse(localStorage.getItem("trendReport") || "{}"); if (saved.geo) state.geo = saved.geo; if (saved.win) state.win = saved.win; } catch (e) {}
+const save = () => { try { localStorage.setItem("trendReport", JSON.stringify({ geo: state.geo, win: state.win })); } catch (e) {} };
+
+$("date").textContent = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+$("geo").value = state.geo;
+
+async function load(force) {
+  $("refresh").disabled = true;
+  if (!state.data || force) $("main").innerHTML = `<div class="status"><h2>Gathering searches…</h2><p>Fetching the latest data from Google Trends.</p></div>`;
+  try {
+    // Hosted (GitHub Pages): read the hourly data files. Local: ask trends.py
+    const r = window.STATIC_DATA
+      ? await fetch(`data/${state.geo}.json`, { cache: force ? "reload" : "no-cache" })
+      : await fetch(`/api/trends?geo=${state.geo}${force ? "&fresh=1" : ""}`);
+    if (!r.ok) throw new Error(window.STATIC_DATA ? "There’s no data for this region yet. Try another region, or check back after the next hourly update." : ((await r.json().catch(() => ({}))).error || r.statusText));
+    const d = await r.json();
+    state.data = d;
+    render();
+  } catch (e) {
+    $("main").innerHTML = `<div class="status"><h2>Couldn’t load trends</h2><p>${esc(e.message)}</p><p style="margin-top:16px"><button class="btn" onclick="load(true)">Try again</button></p></div>`;
+  } finally {
+    $("refresh").disabled = false;
+  }
+}
+
+// Full-size image via the local server, falling back to Google's thumbnail, then to nothing
+const imgSrc = (urls, thumb) => `/api/img?${urls.slice(0, 3).map(u => "u=" + encodeURIComponent(u)).join("&")}&fb=${encodeURIComponent(thumb || "")}`;
+function pic(t, eager) {
+  const news = t.news && t.news.length ? t.news : (storyFor(t) || {}).news || [];
+  const n = news.find(a => a.thumb || a.picture) || news[0];
+  if (!n) return "";
+  const thumb = n.thumb || n.picture || "";
+  if (window.STATIC_DATA && !thumb) return "";
+  const src = window.STATIC_DATA ? thumb : imgSrc(news.map(a => a.url), thumb);
+  return `<img src="${esc(src)}" alt="" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} referrerpolicy="no-referrer" data-fb="${window.STATIC_DATA ? "" : esc(thumb)}" onload="this.classList.add('ok')" onerror="imgFail(this)">`;
+}
+function imgFail(el) {
+  const fb = el.dataset.fb;
+  if (fb) { el.dataset.fb = ""; el.src = fb; return; }
+  const box = el.closest(".thumb");
+  if (box) box.classList.add("empty");
+  el.remove();
+}
+const newsOf = t => t.news && t.news.length ? t.news : (storyFor(t) || {}).news || [];
+const thumbBox = (t, cls = "thumb", eager) => {
+  if (t.term && !t.news && !storyFor(t)) return `<div class="${cls} loading"></div>`;
+  const p = pic(t, eager);
+  return `<div class="${cls}${p ? "" : " empty"}">${p}</div>`;
+};
+
+// News (and so images) for searches outside the top 100 is fetched as their rows near the screen
+const pending = new Set(), wanted = new Set();
+let rowObserver, wantTimer;
+function watchRows() {
+  if (rowObserver) rowObserver.disconnect();
+  rowObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { wanted.add(e.target.dataset.term); rowObserver.unobserve(e.target); } });
+    clearTimeout(wantTimer);
+    wantTimer = setTimeout(() => { const terms = [...wanted]; wanted.clear(); fetchNews(terms); }, 120);
+  }, { rootMargin: "800px 0px" });
+  document.querySelectorAll("[data-pending]").forEach(el => rowObserver.observe(el));
+}
+
+// Picture card for one ranked search (used for the ranking under Breaking now)
+function rankCard(t) {
+  const n = (t.news || [])[0];
+  return `<a class="rank-card" href="${esc(n ? n.url : google(t.term))}" target="_blank" rel="noopener" data-term="${esc(t.term)}"${t.news ? "" : " data-pending"}>
+    ${thumbBox(t)}
+    <span class="kicker"><b class="num">#${t.rank}</b> · ${esc(t.categories[0])} · ${vol(t.volume)} searches</span>
+    <h4 class="hl">${esc(t.term)}</h4>
+    ${n ? `<p class="meta">${esc(n.title)} — ${esc(n.source)}</p>` : ""}
+  </a>`;
+}
+function renderCards() {
+  const rest = state.data[state.win].slice(5);
+  $("cards").innerHTML = rest.slice(0, state.cards).map(rankCard).join("");
+  const more = rest.length > state.cards;
+  $("cards-more").style.display = $("cards-all").style.display = more ? "" : "none";
+  $("cards-all").textContent = `Show all ${rest.length.toLocaleString()}`;
+  $("cards-range").textContent = rest.length ? `#6 – #${Math.min(rest.length, state.cards) + 5} of ${(rest.length + 5).toLocaleString()}` : "";
+  watchRows();
+}
+async function fetchNews(terms) {
+  const data = state.data;
+  terms = terms.filter(t => !pending.has(t));
+  for (let i = 0; i < terms.length; i += 50) {
+    const chunk = terms.slice(i, i + 50);
+    chunk.forEach(t => pending.add(t));
+    try {
+      const r = await fetch(`/api/news?geo=${encodeURIComponent(data.geo)}&` + chunk.map(t => "t=" + encodeURIComponent(t)).join("&"));
+      const got = r.ok ? await r.json() : {};
+      if (state.data !== data) return;
+      for (const w of ["today", "week"]) for (const t of data[w]) if (t.term in got) t.news = got[t.term];
+      const byTerm = new Map(data[state.win].map(t => [t.term, t]));
+      document.querySelectorAll("[data-pending]").forEach(el => {
+        const t = byTerm.get(el.dataset.term);
+        if (!t || !t.news) return;
+        if (el.classList.contains("rank-card")) { el.outerHTML = rankCard(t); return; }
+        el.removeAttribute("data-pending");
+        el.querySelector(".thumb").outerHTML = thumbBox(t);
+      });
+    } catch (e) {
+    } finally {
+      chunk.forEach(t => pending.delete(t));
+    }
+  }
+}
+
+function storyFor(t) {
+  const st = state.data.stories || {};
+  return st[t.term.toLowerCase()] || t.related.map(r => st[r.toLowerCase()]).find(Boolean);
+}
+
+function render() {
+  const d = state.data, items = d[state.win] || [];
+  document.querySelectorAll("nav.tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.win === state.win));
+  $("updated").textContent = "Updated " + new Date(d.fetched * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const label = state.win === "today" ? "past 24 hours" : "past 7 days";
+  const region = $("geo").selectedOptions[0].textContent;
+
+  const tick = items.slice(0, 20).map(t => `<span>${esc(t.term)} · ${vol(t.volume)}</span>`).join("");
+  $("ticker").innerHTML = tick + tick;
+
+  if (!items.length) { $("main").innerHTML = `<div class="status"><h2>No trending searches</h2><p>Google Trends has nothing for ${esc(region)} in the ${label}.</p></div>`; return; }
+
+  const total = items.reduce((s, t) => s + t.volume, 0);
+  const live = items.filter(t => !t.ended).length;
+  const cats = {};
+  items.forEach(t => t.categories.forEach(c => { cats[c] = (cats[c] || 0) + 1; }));
+  const catList = Object.entries(cats).sort((a, b) => b[1] - a[1]);
+  const topCat = catList.find(([c]) => c !== "Other") || catList[0];
+
+  // Lead story: prefer the biggest term, enriched with RSS pictures/news when available
+  const lead = items[0];
+  const side = items.slice(1, 5);
+  const top10 = items.slice(0, 10), max = top10[0].volume;
+  const breaking = state.win === "today" ? Object.values(d.stories || {}).slice(0, 8) : [];
+
+  $("main").innerHTML = `
+    <div class="figures">
+      <div class="figure"><b class="num">${items.length.toLocaleString()}</b><span>Trending searches, ${label}</span></div>
+      <div class="figure"><b class="num">${fmt(total)}+</b><span>Combined searches</span></div>
+      <div class="figure"><b class="num">${live.toLocaleString()}</b><span>Still rising now</span></div>
+      <div class="figure"><b>${esc(topCat[0])}</b><span>Busiest category</span></div>
+    </div>
+
+    <section class="block">
+      <div class="sec-head"><h2>${state.win === "today" ? "Top of the day" : "Top of the week"}</h2><span class="meta">${esc(region)}</span></div>
+      <div class="top-grid">
+        <article class="lead">
+          ${(() => { const p = pic(lead, true);
+            return `<a class="thumb${p ? "" : " empty"}" href="${esc(google(lead.term))}" target="_blank" rel="noopener">${p}<em>${esc(fmt(lead.volume))}+</em></a>`; })()}
+          <span class="kicker">${esc(lead.categories[0])} · #1</span>
+          <h3><a class="hl" href="${esc(google(lead.term))}" target="_blank" rel="noopener">${esc(lead.term)}</a></h3>
+          <p class="stats"><strong>${vol(lead.volume)}</strong> searches · <strong>+${lead.increase.toLocaleString()}%</strong> · started ${ago(lead.started)}${lead.ended ? "" : ` · <span class="live"></span>rising`}</p>
+          ${newsOf(lead).length ? `<ul class="news">${newsOf(lead).slice(0, 3).map(n => `<li><a class="hl" href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.title)}</a><p class="meta">${esc(n.source)}</p></li>`).join("")}</ul>` : ""}
+          <div class="chips">${lead.related.slice(1, 10).map(r => `<a class="chip" href="${esc(google(r))}" target="_blank" rel="noopener">${esc(r)}</a>`).join("")}</div>
+        </article>
+        <div class="side-stack">
+          ${side.map((t, i) => { const n = newsOf(t)[0]; return `
+            <a href="${esc(google(t.term))}" target="_blank" rel="noopener">
+              <div><span class="kicker">${esc(t.categories[0])} · #${i + 2}</span><h4 class="hl">${esc(t.term)}</h4>
+              <p class="meta">${vol(t.volume)} searches · ${ago(t.started)}</p>
+              ${n ? `<p class="meta" style="color:var(--text);margin-top:6px">${esc(n.title)}</p>` : ""}</div>
+              ${thumbBox(t, "thumb", true)}
+            </a>`; }).join("")}
+        </div>
+      </div>
+    </section>
+
+    ${breaking.length ? `<section class="block">
+      <div class="sec-head"><h2>Breaking now</h2><span class="meta">The newest searches to start trending</span></div>
+      <div class="breaking">${breaking.map(b => `
+        <a href="${esc((b.news[0] || {}).url || google(b.title))}" target="_blank" rel="noopener">
+          ${thumbBox({ news: b.news.map(n => ({ ...n, thumb: n.picture || b.picture })) })}
+          <span class="kicker">${esc(b.traffic)} searches</span>
+          <h4 class="hl">${esc(b.title)}</h4>
+          ${b.news[0] ? `<p class="meta">${esc(b.news[0].title)} — ${esc(b.news[0].source)}</p>` : ""}
+        </a>`).join("")}</div>
+    </section>` : ""}
+
+    <section class="block">
+      <div class="sec-head"><h2>${breaking.length ? "The rest of the ranking" : "The rest of the week"}</h2><span class="meta" id="cards-range"></span></div>
+      <div class="breaking" id="cards"></div>
+      <div style="display:flex;gap:10px;justify-content:center"><button class="btn more" id="cards-more">Show 24 more</button><button class="btn more" id="cards-all">Show all</button></div>
+    </section>
+
+    <section class="block">
+      <div class="two-col">
+        <div>
+          <div class="sec-head"><h2>Top 10 by search volume</h2></div>
+          <ol class="ranked">${top10.map((t, i) => `
+            <li><span class="rank">${i + 1}</span>${thumbBox(t)}<a class="term hl" href="${esc(explore(t.term))}" target="_blank" rel="noopener">${esc(t.term)}</a><span class="vol num">${vol(t.volume)}</span>
+            <span class="bar"><i style="width:${Math.max(2, t.volume / max * 100)}%"></i></span></li>`).join("")}</ol>
+          <p class="note">Bars compare Google’s approximate search counts. Click a term to explore it in Google Trends.</p>
+        </div>
+        <div>
+          <div class="sec-head"><h2>By category</h2></div>
+          <ul class="cat-list">${catList.map(([c, n]) => `
+            <li class="${state.cat === c ? "active" : ""}"><button data-cat="${esc(c)}"><span>${esc(c)}</span><span class="num">${n}</span><span class="bar"><i style="width:${n / catList[0][1] * 100}%"></i></span></button></li>`).join("")}</ul>
+          <p class="note">Click a category to filter the full list below.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="all">
+      <div class="sec-head"><h2>Full ranking</h2><span class="meta" id="count"></span></div>
+      <div class="filters">
+        <input type="search" id="q" placeholder="Search terms and related searches" value="${esc(state.q)}">
+        <label><input type="checkbox" id="liveOnly" ${state.liveOnly ? "checked" : ""}> Still rising only</label>
+        ${state.cat ? `<span class="chip">${esc(state.cat)}</span><button class="clear" id="clearCat">Clear category</button>` : ""}
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th data-sort="rank">#</th><th data-sort="term">Search</th><th data-sort="category" class="hide-sm">Category</th>
+          <th data-sort="volume" style="text-align:right">Volume</th><th data-sort="increase" style="text-align:right">Increase</th>
+          <th data-sort="started" style="text-align:right">Started</th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table></div>
+      <div style="display:flex;gap:10px;justify-content:center"><button class="btn more" id="more">Show 100 more</button><button class="btn more" id="all-rows">Show all</button></div>
+    </section>`;
+
+  document.querySelectorAll(".cat-list button").forEach(b => b.onclick = () => {
+    state.cat = state.cat === b.dataset.cat ? null : b.dataset.cat; state.limit = 50; render();
+    $("all").scrollIntoView({ behavior: "smooth" });
+  });
+  $("q").oninput = e => { state.q = e.target.value; state.limit = 50; renderRows(); };
+  $("liveOnly").onchange = e => { state.liveOnly = e.target.checked; state.limit = 50; renderRows(); };
+  if ($("clearCat")) $("clearCat").onclick = () => { state.cat = null; render(); $("all").scrollIntoView(); };
+  document.querySelectorAll("th[data-sort]").forEach(th => th.onclick = () => {
+    const k = th.dataset.sort;
+    state.dir = state.sort === k ? -state.dir : (k === "term" || k === "category" || k === "rank" ? 1 : -1);
+    state.sort = k; renderRows();
+  });
+  $("more").onclick = () => { state.limit += 100; renderRows(); };
+  $("all-rows").onclick = () => { state.limit = Infinity; renderRows(); };
+  $("cards-more").onclick = () => { state.cards += 24; renderCards(); };
+  $("cards-all").onclick = () => { state.cards = Infinity; renderCards(); };
+  renderRows();
+  renderCards();
+}
+
+function renderRows() {
+  const q = state.q.trim().toLowerCase();
+  let rows = state.data[state.win].filter(t =>
+    (!state.cat || t.categories.includes(state.cat)) &&
+    (!state.liveOnly || !t.ended) &&
+    (!q || t.term.toLowerCase().includes(q) || t.related.some(r => r.toLowerCase().includes(q))));
+  const key = { rank: t => t.rank, term: t => t.term, category: t => t.categories[0], volume: t => t.volume, increase: t => t.increase, started: t => t.started || 0 }[state.sort];
+  rows = rows.slice().sort((a, b) => { const x = key(a), y = key(b); return x === y ? a.rank - b.rank : (x > y ? 1 : -1) * state.dir; });
+  document.querySelectorAll("th[data-sort]").forEach(th => th.setAttribute("aria-sort", th.dataset.sort === state.sort ? (state.dir < 0 ? "descending" : "ascending") : "none"));
+  $("count").textContent = `${rows.length.toLocaleString()} searches`;
+  $("rows").innerHTML = rows.slice(0, state.limit).map(t => `
+    <tr data-term="${esc(t.term)}"${t.news ? "" : " data-pending"}>
+      <td class="rk num">${t.rank}</td>
+      <td class="t"><div class="row">${thumbBox(t)}<div><a class="hl" href="${esc(google(t.term))}" target="_blank" rel="noopener">${esc(t.term)}</a>
+        <span class="rel">${esc(t.related.slice(1, 5).join(" · "))}</span></div></div></td>
+      <td class="hide-sm">${esc(t.categories.join(", "))}</td>
+      <td class="r num"><strong>${vol(t.volume)}</strong></td>
+      <td class="r num">+${t.increase.toLocaleString()}%</td>
+      <td class="r">${t.ended ? "" : '<span class="live" title="Still rising"></span>'}${ago(t.started)}</td>
+    </tr>`).join("") || `<tr><td colspan="6" class="meta" style="padding:24px 0">No searches match.</td></tr>`;
+  $("more").style.display = $("all-rows").style.display = rows.length > state.limit ? "" : "none";
+  $("all-rows").textContent = `Show all ${rows.length.toLocaleString()}`;
+  watchRows();
+}
+
+document.querySelectorAll("nav.tabs button").forEach(b => b.onclick = () => {
+  state.win = b.dataset.win; state.limit = 50; state.cards = 24; save();
+  if (state.data) { render(); window.scrollTo({ top: 0 }); }
+});
+$("geo").onchange = e => { state.geo = e.target.value; state.cat = null; state.cards = 24; save(); load(true); };
+$("refresh").onclick = () => load(true);
+load();
+</script>
+</body>
+</html>

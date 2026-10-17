@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.DS_Store
+site/
+# Design study containing third-party content; kept local only
+index.html
