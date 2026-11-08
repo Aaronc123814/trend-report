@@ -28,7 +28,7 @@ Options: `--port 9000` to use another port, `--no-browser` to skip opening the b
 
 | Part | Source |
 |---|---|
-| Rankings, volumes, categories, related searches | The data behind Google's "Trending now" page (`trends.google.com/_/TrendsUi/data/batchexecute`, rpc `i0OFE`) |
+| Rankings, volumes, categories, related searches | The data embedded in Google's "Trending now" page (`trends.google.com/trending`, `ds:0` block) |
 | News headlines for each search | Same endpoint, rpc `w4opAf` |
 | Breaking now | Google Trends RSS feed (`trends.google.com/trending/rss?geo=XX`) |
 | Photos | Hosted site: Google's news thumbnails. Local app: each article's own share image (`og:image`), falling back to the thumbnail |

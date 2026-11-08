@@ -28,6 +28,8 @@ CACHE_SECONDS = 600
 WINDOWS = {"today": 24, "week": 168}
 WITH_NEWS = 100  # how many top searches per window get news articles and images
 BATCH_URL = "https://trends.google.com/_/TrendsUi/data/batchexecute"
+TRENDING_URL = "https://trends.google.com/trending"
+TRENDING_DATA = re.compile(r"AF_initDataCallback\(\{key: 'ds:0', hash: '\d+', data:")
 
 CATEGORIES = {
     1: "Autos & vehicles", 2: "Beauty & fashion", 3: "Business & finance", 4: "Entertainment",
@@ -67,9 +69,13 @@ def _batch(calls):
 
 def fetch_trending(geo, hours, lang="en-US"):
     """All trending searches for a region over the last `hours` (24 or 168)."""
-    payload = _batch([("i0OFE", [None, None, geo, 0, lang, hours, 1])]).get(0)
+    # The "Trending now" page embeds the full list; the i0OFE RPC has refused anonymous calls since Nov 2026.
+    query = urllib.parse.urlencode({"geo": geo, "hl": lang, "hours": hours})
+    page = _get(f"{TRENDING_URL}?{query}")
+    match = TRENDING_DATA.search(page)
+    payload = json.JSONDecoder().raw_decode(page, match.end())[0] if match else None
     if not payload:
-        raise RuntimeError("Google Trends returned no data for this region")
+        raise RuntimeError("the Google Trends page had no trending data for this region")
     items = []
     for it in payload[1] or []:
         cats = it[10] or []
